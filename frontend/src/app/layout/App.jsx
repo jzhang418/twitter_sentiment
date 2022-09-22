@@ -7,33 +7,11 @@ import NavBar from "../../features/nav/NavBar";
 import ModalManager from "../common/modals/ModalManager";
 import { ToastContainer } from "react-toastify";
 import ErrorComponent from "../common/errors/ErrorComponent";
-import { useEffect } from "react";
-import firebase from "../config/firebase";
-import { useDispatch, useSelector } from "react-redux";
-import { signInUser, signOutUser } from "../../features/auth/authSlice";
 import ChangePasswordPage from "../../features/auth/ChangePasswordPage";
-import { appLoaded } from "../async/asyncSlice";
-import LoadingComponent from "./LoadingComponent";
 import ProfilePage from "../../features/profiles/profilePage/ProfilePage";
 
 function App() {
-  const dispatch = useDispatch();
-  const {initialized} = useSelector(state => state.async);
-
-  useEffect(() => {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-          dispatch(signInUser(user));
-          dispatch(appLoaded());
-      } else {
-          dispatch(signOutUser());
-          dispatch(appLoaded());
-      }
-  })
-  }, [dispatch]);
-
-  if (!initialized) return <LoadingComponent content="Loading App..." />
-
+  
   return (
     <>
       <ModalManager />

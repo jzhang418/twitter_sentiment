@@ -1,25 +1,21 @@
 import { Grid } from "semantic-ui-react";
 import AccountList from "./AccountList";
 import { useDispatch, useSelector } from "react-redux";
-import SideBar from "./SideBar";
 import EventListItemPlaceholder from "./AccountListItemPlaceholder";
-import { listenToAccountsFromFirestore } from "../../../app/firestore/firestoreService";
-import { listenToAccounts } from "../accountSlice";
-import useFirestoreCollection from "../../../app/hooks/useFilestoreCollection";
+import { useEffect } from "react";
+import { fetchAccounts } from "../accountSlice";
 
 function AccountDashboard() {
     const dispatch = useDispatch();
     const {accounts, loading} = useSelector(state => state.account);
 
-    useFirestoreCollection({
-        query: () => listenToAccountsFromFirestore(),
-        data: accounts => dispatch(listenToAccounts(accounts)),
-        deps: [dispatch]
-    })
+    useEffect(() => {
+        dispatch(fetchAccounts())
+    }, [dispatch])
 
     return (
         <Grid>
-            <Grid.Column width={10}>
+            <Grid.Column width={16}>
                 {loading &&
                     <>
                     <EventListItemPlaceholder />
@@ -27,9 +23,6 @@ function AccountDashboard() {
                     </>
                 }
                 <AccountList accounts={accounts} />
-            </Grid.Column>
-            <Grid.Column width={6}>
-                <SideBar />
             </Grid.Column>
         </Grid>
     )

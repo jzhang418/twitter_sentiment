@@ -1,19 +1,29 @@
 import { configureStore } from "@reduxjs/toolkit";
-import accountReducer from "../../features/accounts/accountSlice";
-import modalReducer from "../../app/common/modals/modalSlice";
-import authReducer from "../../features/auth/authSlice";
-import asyncReducer from "../../app/async/asyncSlice";
-import profileReducer from "../../features/profiles/profileSlic";
+import { persistStore, persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
+import rootReducer from "./rootReducer";
+
+const appReducer = (state, action) => {
+    if (action.type === 'auth/signOutUser') {
+        storage.removeItem('persist:root')
+        return rootReducer(undefined, action)
+    }
+
+    return rootReducer(state, action)
+}
+
+const persistConfig = {
+    key: 'root',
+    storage,
+}
+
+const persistedReducer = persistReducer(persistConfig, appReducer);
 
 export const store = configureStore({
-    reducer: {
-        account: accountReducer,
-        modals: modalReducer,
-        auth: authReducer,
-        async: asyncReducer,
-        profile: profileReducer,
-    },
+    reducer: persistedReducer,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false
     }),
 })
+
+export const persistor = persistStore(store)

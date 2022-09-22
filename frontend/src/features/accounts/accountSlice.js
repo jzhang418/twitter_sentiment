@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchSampleData } from "../../app/api/mockApi";
+import axios from "axios";
 
 const initialState = {
     loading: false,
@@ -7,17 +7,32 @@ const initialState = {
     error: null
 }
 
-export const fetchAccounts = createAsyncThunk('account/fetchAccounts', () => {
-    return fetchSampleData()
-})
+export const fetchAccounts = createAsyncThunk(
+    'account/fetchAccounts', 
+    async (_, { getState, rejectWithValue }) => {
+        try {
+            const { auth: {currentUser} } = getState();
+
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${currentUser.token}`
+                }  
+            }
+
+            const {data} = await axios.get('/api/accounts/', config)
+
+            return data
+        } catch (error) {
+            return error.message
+        }
+    }
+)
 
 const accountSlice = createSlice({
     name: 'accounts',
     initialState,
     reducers: {   
-        listenToAccounts: (state, action) => {
-            state.accounts = action.payload
-        },
         createAccount: (state, action) => {
             state.push(action.payload)
         },
@@ -50,7 +65,7 @@ const accountSlice = createSlice({
     }
 })
 
-export const { listenToAccounts, createAccount, asyncActionStart, asyncActionFinish, asyncActionError } = accountSlice.actions
+export const { createAccount, asyncActionStart, asyncActionFinish, asyncActionError } = accountSlice.actions
 
 export default accountSlice.reducer
 

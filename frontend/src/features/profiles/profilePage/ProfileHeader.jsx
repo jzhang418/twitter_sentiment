@@ -1,6 +1,6 @@
 import { Grid, Header, Item, Segment, Statistic } from "semantic-ui-react";
 
-export default function ProfileHeaderPage({ profile }) {
+export default function ProfileHeaderPage({ profile, followings }) {
   return (
     <Segment>
       <Grid>
@@ -20,7 +20,7 @@ export default function ProfileHeaderPage({ profile }) {
         </Grid.Column>
         <Grid.Column width={4}>
           <Statistic.Group>
-            <Statistic label='Following' value={5} />
+            <Statistic label='Following' value={followings} />
           </Statistic.Group>
         </Grid.Column>
       </Grid>

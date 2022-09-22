@@ -6,8 +6,9 @@ import MyTextInput from "../../app/common/form/MySelectInput";
 import { useDispatch } from "react-redux";
 import { closeModal } from "../../app/common/modals/modalSlice";
 import { useNavigate } from "react-router-dom";
-import { registerInFirebase } from "../../app/firestore/firebaseService";
 import SocialLogin from "./SocialLogin";
+import { registerUser } from "./authSlice";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 function RegisterForm() {
   const dispatch = useDispatch();
@@ -16,35 +17,38 @@ function RegisterForm() {
   return (
     <ModalWrapper size='mini' header='Register'>
       <Formik
-        initialValues={{ displayName: "", email: "", password: "" }}
+        initialValues={{ username: "", email: "", password: "", twitter_id: "" }}
         validationSchema={Yup.object({
-          displayName: Yup.string().required(),
+          username: Yup.string().required(),
           email: Yup.string().required().email(),
           password: Yup.string().required(),
-          twitterAccount: Yup.string().required(),
+          twitter_id: Yup.string().required(),
         })}
         onSubmit={async (values, { setSubmitting, setErrors }) => {
-          try {
-            await registerInFirebase(values);
+          dispatch(registerUser(values))
+          .then(unwrapResult)
+          .then(() => {
             dispatch(closeModal());
             navigate("/accounts");
-          } catch (error) {
+          })
+          .catch(error => {
             setErrors({ auth: error.message });
-          } finally {
+          })
+          .finally(() => {
             setSubmitting(false);
-          }
+          })
         }}
       >
         {({ isSubmitting, isValid, dirty, errors }) => (
           <Form className='ui form'>
-            <MyTextInput name='displayName' placeholder='Dislay Name' />
+            <MyTextInput name='username' placeholder='Username' />
             <MyTextInput name='email' placeholder='Email Address' />
             <MyTextInput
               name='password'
               placeholder='Password'
               type='password'
             />
-            <MyTextInput name='twitterAccount' placeholder='Twitter Account' />
+            <MyTextInput name='twitter_id' placeholder='Twitter ID' />
             {errors.auth && (
               <Label
                 basic

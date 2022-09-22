@@ -6,8 +6,9 @@ import MyTextInput from "../../app/common/form/MySelectInput";
 import { useDispatch } from "react-redux";
 import { closeModal } from "../../app/common/modals/modalSlice";
 import { useNavigate } from "react-router-dom";
-import { signInWithEmail } from "../../app/firestore/firebaseService";
 import SocialLogin from "./SocialLogin";
+import { signInUser } from "./authSlice";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 function LoginForm() {
   const dispatch = useDispatch();
@@ -16,26 +17,29 @@ function LoginForm() {
   return (
     <ModalWrapper size='mini' header='Sign in'>
       <Formik
-        initialValues={{ email: "", password: "" }}
+        initialValues={{ username: "", password: "" }}
         validationSchema={Yup.object({
-          email: Yup.string().required().email(),
+          username: Yup.string().required(),
           password: Yup.string().required(),
         })}
         onSubmit={async (values, { setSubmitting, setErrors }) => {
-          try {
-            await signInWithEmail(values);
-            dispatch(closeModal());
-            navigate("/accounts");
-          } catch (error) {
-            setErrors({auth: 'username or password is invalid'});
-          } finally {
-            setSubmitting(false);
-          }
+          dispatch(signInUser(values))
+            .then(unwrapResult)
+            .then(() => {
+              dispatch(closeModal());
+              navigate("/accounts");
+            })
+            .catch(error => {
+              setErrors({auth: 'username or password is invalid'});
+            })
+            .finally(() => {
+              setSubmitting(false);
+            })
         }}
       >
         {({ isSubmitting, isValid, dirty, errors }) => (
           <Form className='ui form'>
-            <MyTextInput name='email' placeholder='Email Address' />
+            <MyTextInput name='username' placeholder='Username' />
             <MyTextInput
               name='password'
               placeholder='Password'
