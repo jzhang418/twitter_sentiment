@@ -116,7 +116,7 @@ Endpoint URL: GET api/tweets/
 
 Query parameters:  
 'user_id': The specific twitter account ID to fetch tweets from  
-'selected_date' The specific date (in mm/dd/yyyy format) to fetch tweets from  
+'selected_date': The specific date (in mm/dd/yyyy format) to fetch tweets from  
 
 JSON Response:  
 'id': Tweet ID from Twitter API response  
