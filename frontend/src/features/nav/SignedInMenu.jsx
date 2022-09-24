@@ -26,7 +26,7 @@ function SignedInMenu() {
           <Dropdown.Item as={Link} to={`/profile/${currentUser.id}`} text='My Profile' icon='user' />
           <Dropdown.Item
             onClick={handleSignOut}
-            text='Sing Out'
+            text='Sign Out'
             icon='power'
           />
         </Dropdown.Menu>
