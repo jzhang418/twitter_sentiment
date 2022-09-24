@@ -15,7 +15,18 @@ The frontend is implemented using ReactJs, which is one of 3 major cross platfor
 
 ## Backend
 
-Since we need to do sentiment/topic/bot analysis in our App, we choose Python as our backend programming language. Python has extensive data processing and machine learning libraries, so it's a perfect fit for us. As far as backend framework is concerned, both Django and Flask are based on Python language. As a full-stack web framework, Django has more features and suitable for large web application, but Flask is more lightweight for developing small web applications as ours, so we choose it as our backend framework.
+Since we need to do sentiment/topic/bot analysis in our App, we choose Python as our backend programming language. Python has extensive data extraction, data processing and machine learning libraries, so it's a perfect fit for us. As far as backend framework is concerned, both Django and Flask are based on Python language. Flask is lightweitht for quickly developing small and simple application, however our App needs user sign in and login capabilities and Django as a full-stack web framework already have infrastruture for authentication, so we choose it as our backend framework.
+
+## Analysis
+
+### Bot analysis
+We use Botometer API to do Bot analysis.
+
+### Sentiment analysis
+We tried both Python NLTK and Google natural language API. In order to reduce the total API call latency to reduce the impact on frontend user experience, we use Python NLTK libary for sentiment analysis now but we can easily switch to Google natural language API if needed.
+
+### Entity (topic) analysis
+We use Google natural language API for entity/topic analysis
 
 ## API
 
@@ -114,8 +125,24 @@ JSON Response:
 'topics': <Topics string created from context_annotations['entity']['name'] field of Twitter API v2 response. Each topic is separated by comma in the string>
 'sentiment': <single integer number represents sentiment of this tweet: 1: positive; 0: neutral; -1: negative>
 
-## Major architecture changes made
+### 7. Bot check
+Usage: Use this endpoint to check whether a twitter account is bot or not
 
+Endpoint URL: GET accounts/checkbot/<twitter account screenname>/
+
+Path parameters:
+'name' <The specific twitter account screenname>
+
+JSON Response:
+'username' <The specific twitter account screenname>
+'isBot': <single integer number represents whether it is bot or not: 0: human; 1: bot>
+
+## Issues encounterred
+1. Initially we coded our frontend to use Google firebase/firestore as backend authentication and storage engine. However soon we noticed that it's not easier to quickly setup backend infrastruture in Google Cloud to call Twitter API. Therefore we switched to Python backend framework because Python has the tweepy library which is very easy to use to access Twitter API.
+
+2. The Botometer library we used to do bot checking is using old version of tweepy which cannot use new V2 version of Twitter API. This means we cannot use some feateurs provided by Twitter API V2.
+
+3. Since we need to call Twitter API to grab tweets first, then we need to call other APIs, such as Google natural language and Botometer, to do sentiment/entity/bot analysis, this introduces noticable delay which forces us to redesign some of our frontend UI/feature to improve user experience.
 
 # Frontend build
 
@@ -126,6 +153,7 @@ This is the Web App frontend built with ReactJs
 
 ## Install external packages
 
+cd frontend
 run `npm install`
 
 ## Start the development server
@@ -140,5 +168,35 @@ You may also see any lint errors in the console.
 
 ## Default backend port
 
-The default backend port is specified in the package.jso file as following and can be updated as needed:
+The default backend port is specified in the package.json file as following and can be updated as needed:
 "proxy": "http://127.0.0.1:8000",
+
+# Backend build
+
+The backend framework used is Django.
+
+## Create virtual environment
+
+pip install virtualenv
+virtualenv myenv
+
+## Activate virtual environment
+
+myenv\Scripts\activate
+
+## Install extra packages
+
+pip install django
+pip install djangorestframework
+pip install djangorestframework-simplejwt
+pip install django-cors-headers
+pip install requests
+pip install textblob
+pip install numpy
+pip install pandas
+pip install botometer
+
+## Start Django server
+
+cd backend
+python manage.py runserver
