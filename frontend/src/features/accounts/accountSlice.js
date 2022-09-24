@@ -3,8 +3,10 @@ import axios from "axios";
 
 const initialState = {
     loading: false,
+    checkBotLoading: false,
     accounts: [],
-    error: null
+    error: null,
+    checkBotError: null,
 }
 
 export const fetchAccounts = createAsyncThunk(
@@ -24,10 +26,23 @@ export const fetchAccounts = createAsyncThunk(
 
             return data
         } catch (error) {
-            return error.message
+            return rejectWithValue(error)
         }
     }
 )
+
+export const checkBot = createAsyncThunk(
+    "account/checkBot", 
+    async (username, { rejectWithValue }) => {
+        try {
+        const { data } = await axios.get(`/api/accounts/checkbot/${username}`);
+            return data;
+        } catch (error) {
+            return rejectWithValue(error);
+        }
+    }
+)
+  
 
 const accountSlice = createSlice({
     name: 'accounts',
@@ -48,20 +63,36 @@ const accountSlice = createSlice({
             state.error = action.payload;
         },
     },
-    extraReducers: (builder) => {
-        builder.addCase(fetchAccounts.pending, (state) => {
+    extraReducers: {
+        [fetchAccounts.pending]: (state) => {
             state.loading = true;
-        })
-        builder.addCase(fetchAccounts.fulfilled, (state, action) => {
+        },
+        [fetchAccounts.fulfilled]: (state, action) => {
             state.loading = false;
             state.accounts = action.payload;
             state.error = null;
-        })
-        builder.addCase(fetchAccounts.rejected, (state, action) => {
+        },
+        [fetchAccounts.rejected]: (state, action) => {
             state.loading = false;
             state.accounts = [];
-            state.error = {message: action.error.message};
-        })
+            state.error = action.payload;
+        },
+        [checkBot.pending]: (state) => {
+            state.checkBotLoading = true;
+        },
+        [checkBot.fulfilled]: (state, action) => {
+            state.checkBotLoading = false;
+            const {username, isBot} = action.payload;
+            const account = state.accounts.find((account) => account.username === username)
+            if (account ) {
+                account.isBot = isBot;
+            }
+            state.checkBotError = null;
+        },
+        [checkBot.rejected]: (state, action) => {
+            state.checkBotLoading = false;
+            state.checkBotError = action.payload;
+        },
     }
 })
 

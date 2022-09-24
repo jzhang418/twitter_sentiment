@@ -10,15 +10,14 @@ const initialState = {
   error: null,
 };
 
-export const getTweets = createAsyncThunk("tweet/getTweets", async (term) => {
+export const getTweets = createAsyncThunk("tweet/getTweets", async (term, { rejectWithValue }) => {
   try {
-    //console.log(term.selected_date)
     const { data } = await axios.get("/api/tweets/", {
       params: { user_id: term.user_id, selected_date: term.selected_date },
     });
     return data;
   } catch (error) {
-    return error.message;
+    return rejectWithValue(error);
   }
 });
 
@@ -30,11 +29,11 @@ const accountDetailSlice = createSlice({
       state.selectedDate = action.payload;
     },
   },
-  extraReducers: (builder) => {
-    builder.addCase(getTweets.pending, (state) => {
+  extraReducers: {
+    [getTweets.pending]: (state) => {
       state.loading = true;
-    });
-    builder.addCase(getTweets.fulfilled, (state, action) => {
+    },
+    [getTweets.fulfilled]: (state, action) => {
       const tweets = action.payload;
       const positive = tweets.reduce(
         (acc, cur) => (cur.sentiment === 1 ? ++acc : acc),
@@ -63,12 +62,12 @@ const accountDetailSlice = createSlice({
       state.sentiment = [positive, neutral, negative, average.toFixed(0)];
       state.topics = Array.from(topicSet).join(", ");
       state.error = null;
-    });
-    builder.addCase(getTweets.rejected, (state, action) => {
+    },
+    [getTweets.rejected]: (state, action) => {
       state.loading = false;
       state.accounts = [];
-      state.error = { message: action.error.message };
-    });
+      state.error = action.payload;
+    },
   },
 });
 

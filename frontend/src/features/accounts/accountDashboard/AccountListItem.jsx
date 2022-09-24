@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Button, Item, Label, Segment, Statistic } from "semantic-ui-react";
+import { Button, Item, Segment, Statistic } from "semantic-ui-react";
 import { format } from "date-fns";
 
 function AccountListItem({ account }) {
@@ -14,12 +14,6 @@ function AccountListItem({ account }) {
             <Item.Content verticalAlign='middle'>
               <Item.Header content={account.username} />
               <Item.Description >Member since: {format(new Date(account.created_at), 'MMMM d, yyyy')}</Item.Description>
-              <Label
-                style={{ top: "-30px" }}
-                ribbon='right'
-                color={account.isBot ? 'red' : 'green'}
-                content={account.isBot ? 'Bot' : 'Human'}
-              />
             </Item.Content>
           </Item>
         </Item.Group>

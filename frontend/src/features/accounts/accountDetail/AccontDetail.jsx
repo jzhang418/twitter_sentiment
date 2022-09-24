@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, Navigate } from "react-router-dom";
 import {
+  Button,
   Comment,
   Grid,
   Header,
@@ -12,13 +13,16 @@ import {
 } from "semantic-ui-react";
 import Chart from "react-apexcharts";
 import { format } from "date-fns";
+
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { getTweets, updateSelectedDate } from "./accountDetailSlice";
 import AccountDetailSidebar from "./AccountDetailSidebar";
+import { checkBot } from "../accountSlice";
 
-function AccountDetial() {
+function AccountDetail() {
   const dispatch = useDispatch();
   const params = useParams();
+  const checkBotLoading = useSelector((state) => state.account.checkBotLoading)
   const account = useSelector((state) =>
     state.account.accounts.find((e) => e.id === Number(params.id))
   );
@@ -110,6 +114,10 @@ function AccountDetial() {
     dispatch(updateSelectedDate(date));
   }
 
+  function handleCheckBot(username) {
+    dispatch(checkBot(username))
+  }
+
   return (
     <Grid>
       <Grid.Column width={10}>
@@ -127,12 +135,19 @@ function AccountDetial() {
                     Member since:{" "}
                     {format(new Date(account.created_at), "MMMM d, yyyy")}
                   </Item.Description>
-                  <Label
-                    style={{ top: "-50px" }}
-                    ribbon='right'
-                    color={account.isBot ? "red" : "green"}
-                    content={account.isBot ? "Bot" : "Human"}
-                  />
+                  { account.isBot !== -1 &&
+                    <Label
+                      style={{ top: "-50px" }}
+                      ribbon='right'
+                      color={account.isBot ? "red" : "green"}
+                      content={account.isBot ? "Bot" : "Human"}
+                    />
+                  }
+                  <Item.Extra>
+                    <Button onClick={() => handleCheckBot(account.username)} loading={checkBotLoading} primary floated='right'>
+                      Check Bot
+                    </Button>
+                  </Item.Extra>
                 </Item.Content>
               </Item>
             </Item.Group>
@@ -259,4 +274,4 @@ function AccountDetial() {
   );
 }
 
-export default AccountDetial;
+export default AccountDetail;
