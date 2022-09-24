@@ -60,7 +60,7 @@ JSON Response:
 'email': Registered User email  
 'twitter_id': Registered User twitter account ID  
 
-### 3. User Profile
+### 3. User Profile  
 Usage: Use this endpoint to get user profile
 
 Endpoint URL: GET api/users/profile/
@@ -128,12 +128,12 @@ JSON Response:
 ### 7. Bot check
 Usage: Use this endpoint to check whether a twitter account is bot or not
 
-Endpoint URL: GET accounts/checkbot/<twitter account screenname>/
+Endpoint URL: GET accounts/checkbot/[twitter account screenname]/
 
 Path parameters:  
 'name': The specific twitter account screenname  
 
-JSON Response:
+JSON Response:  
 'username': The specific twitter account screenname  
 'isBot': single integer number represents whether it is bot or not: 0: human; 1: bot  
 
