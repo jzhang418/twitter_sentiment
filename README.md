@@ -153,7 +153,7 @@ This is the Web App frontend built with ReactJs
 
 ## Install external packages
 
-`cd frontend`
+`cd frontend`  
 run `npm install`
 
 ## Start the development server
