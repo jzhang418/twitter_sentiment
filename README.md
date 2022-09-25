@@ -1,3 +1,7 @@
+# Demo Video
+
+[![T-Sentiment](http://img.youtube.com/vi/PwIoKELqt8k/2.jpg)](https://youtu.be/PwIoKELqt8k "T-Sentiment")
+
 # Usage
 
 This web App can be used by people to check:
@@ -19,13 +23,13 @@ Since we need to do sentiment/topic/bot analysis in our App, we choose Python as
 
 ## Analysis
 
-### Bot analysis
+### Bot Analysis
 We use Botometer API to do Bot analysis.
 
-### Sentiment analysis
+### Sentiment Analysis
 We tried both Python NLTK and Google natural language API. In order to reduce the total API call latency to reduce the impact on frontend user experience, we use Python NLTK libary for sentiment analysis now but we can easily switch to Google natural language API if needed.
 
-### Entity (topic) analysis
+### Entity (Topic) Analysis
 We use Google natural language API for entity/topic analysis
 
 ## API
