@@ -1,6 +1,6 @@
 # Demo Video
 
-[![T-Sentiment](http://img.youtube.com/vi/PwIoKELqt8k/2.jpg)](https://youtu.be/PwIoKELqt8k "T-Sentiment")
+[![T-Sentiment](http://img.youtube.com/vi/PwIoKELqt8k/0.jpg)](https://youtu.be/PwIoKELqt8k "T-Sentiment")
 
 # Usage
 
